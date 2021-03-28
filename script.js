@@ -8,7 +8,7 @@ const iterateAndTriggerClickFunction = async (
   elements,
   startAt,
   stopAfter,
-  noLogs
+  logs
 ) => {
   for (var i = 0; i < elements.length; i++) {
     // Stops the loop after it reaches the number of deletions that you provided
@@ -34,7 +34,7 @@ const iterateAndTriggerClickFunction = async (
 
       // Sometimes there will not be a third row, this means that the element will not exist
       if (menuButton) {
-        noLogs && console.log("Deleting video: ", menuButton);
+        logs && console.log("Deleting video: ", menuButton);
 
         menuButton.click();
         await wait();
@@ -46,7 +46,7 @@ const iterateAndTriggerClickFunction = async (
           "#items > ytd-menu-service-item-renderer > paper-item"
         );
 
-        noLogs &&
+        logs &&
           console.log(
             "Deleting video that had been removed from youtube: ",
             deletedVideoMenuButton
@@ -59,11 +59,11 @@ const iterateAndTriggerClickFunction = async (
   }
 };
 
-const main = (query, startAt = 0, stopAfter = 1, noLogs = true) => {
+const main = (query, startAt = 0, stopAfter = 1, logs = false) => {
   // Selects all the video rows. A list with one element for every video in the playlist
   const playlistVideoRow = document.querySelectorAll(query);
 
-  iterateAndTriggerClickFunction(playlistVideoRow, startAt, stopAfter, noLogs);
+  iterateAndTriggerClickFunction(playlistVideoRow, startAt, stopAfter, logs);
 };
 
 main("#contents > ytd-playlist-video-renderer", 0, 100);
