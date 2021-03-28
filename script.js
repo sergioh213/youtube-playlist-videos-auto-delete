@@ -7,17 +7,22 @@ function wait(ml = 100) {
 const iterateAndTriggerClickFunction = async (
   elements,
   startAt,
-  stopAfter,
-  logs
+  amountOfVideosToDelete,
+  showLogs,
+  originalQuery,
+  originalAmountOfVideosToDelete
 ) => {
-  for (var i = 0; i < elements.length; i++) {
+  for (let i = 0; i < elements.length; i++) {
     // Stops the loop after it reaches the number of deletions that you provided
-    if (i >= startAt + stopAfter) {
+    if (i >= startAt + amountOfVideosToDelete) {
       break;
     }
 
     // Deletes only after the index that you provided
     if (i >= startAt) {
+      const currentDeletionNumber =
+        originalAmountOfVideosToDelete - amountOfVideosToDelete + (i + 1);
+
       // Select the menu button of this video's row
       const element = elements[i].querySelector(
         "#button.style-scope.yt-icon-button"
@@ -34,7 +39,13 @@ const iterateAndTriggerClickFunction = async (
 
       // Sometimes there will not be a third row, this means that the element will not exist
       if (menuButton) {
-        logs && console.log("Deleting video: ", menuButton);
+        showLogs &&
+          console.log(
+            "#",
+            currentDeletionNumber,
+            " Deleting video: ",
+            menuButton
+          );
 
         menuButton.click();
         await wait();
@@ -46,9 +57,11 @@ const iterateAndTriggerClickFunction = async (
           "#items > ytd-menu-service-item-renderer > paper-item"
         );
 
-        logs &&
+        showLogs &&
           console.log(
-            "Deleting video that had been removed from youtube: ",
+            "#",
+            currentDeletionNumber,
+            " Deleting video that had been removed from youtube: ",
             deletedVideoMenuButton
           );
 
@@ -57,13 +70,68 @@ const iterateAndTriggerClickFunction = async (
       }
     }
   }
+
+  const remainingAmountOfVideosToDelete =
+    amountOfVideosToDelete - elements.length;
+
+  // Often, the UI contained less videos than you wanted to delete,
+  // so we recursively start the process again
+  if (remainingAmountOfVideosToDelete > 0) {
+    showLogs &&
+      console.log(
+        'Recursively calling method "main", remaining videos to be deleted: '
+      );
+
+    main(
+      originalQuery,
+      0, // Always starting at the first video after being the first time
+      remainingAmountOfVideosToDelete,
+      showLogs,
+      originalAmountOfVideosToDelete
+    );
+  } else {
+    const singularOrPluralWord =
+      originalAmountOfVideosToDelete === 1 ? " videos." : " video.";
+
+    // This log is alway called, letting you know that the process has finished
+    console.log(
+      "DONE. Deleted ",
+      originalAmountOfVideosToDelete,
+      singularOrPluralWord
+    );
+  }
 };
 
-const main = (query, startAt = 0, stopAfter = 1, logs = false) => {
+const main = (
+  query,
+  startAt = 0,
+  amountOfVideosToDelete = 1,
+  showLogs = false,
+  originalAmountOfVideosToDelete
+) => {
   // Selects all the video rows. A list with one element for every video in the playlist
   const playlistVideoRow = document.querySelectorAll(query);
 
-  iterateAndTriggerClickFunction(playlistVideoRow, startAt, stopAfter, logs);
+  showLogs &&
+    console.log(
+      "Number of videos selected: ",
+      (playlistVideoRow && playlistVideoRow.length) || 0
+    );
+
+  if (playlistVideoRow && playlistVideoRow.length) {
+    const originalAmount =
+      originalAmountOfVideosToDelete || amountOfVideosToDelete;
+
+    iterateAndTriggerClickFunction(
+      playlistVideoRow,
+      startAt,
+      amountOfVideosToDelete,
+      showLogs,
+      query,
+      originalAmount
+    );
+  }
 };
 
-main("#contents > ytd-playlist-video-renderer", 0, 100);
+// Example execution: delete 210 videos starting by the first one and logging the process.
+main("#contents > ytd-playlist-video-renderer", 0, 210, true);
