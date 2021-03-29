@@ -4,12 +4,21 @@ function wait(ml = 100) {
   });
 }
 
+// This are all the queries used to select UI elements in their nested order
+const LIST_OF_ALL_VIDEOS_QUERY_SELECTOR =
+  "#contents > ytd-playlist-video-renderer";
+const SINGLE_VIDEO_MENU_BUTTON_QUERY_SELECTOR =
+  "#button.style-scope.yt-icon-button";
+const DELETE_OPTION_ON_MULTIPLE_OPTIONS_MENU_QUERY_SELECTOR =
+  "#items > ytd-menu-service-item-renderer:nth-child(3) > paper-item";
+const DELETE_OPTION_ON_SINGLE_OPTION_MENU_QUERY_SELECTOR =
+  "#items > ytd-menu-service-item-renderer > paper-item";
+
 const iterateAndTriggerClickFunction = async (
   elements,
   startAt,
   amountOfVideosToDelete,
   showLogs,
-  originalQuery,
   originalAmountOfVideosToDelete
 ) => {
   for (let i = 0; i < elements.length; i++) {
@@ -25,7 +34,7 @@ const iterateAndTriggerClickFunction = async (
 
       // Select the menu button of this video's row
       const element = elements[i].querySelector(
-        "#button.style-scope.yt-icon-button"
+        SINGLE_VIDEO_MENU_BUTTON_QUERY_SELECTOR
       );
 
       // Click on the menu for the pop-up to open and wait for the animation
@@ -34,7 +43,7 @@ const iterateAndTriggerClickFunction = async (
 
       // Select the delete option in the pop-up, the 3rd button (Change if it is not the 3rd row in your playlist)
       const menuButton = document.querySelector(
-        "#items > ytd-menu-service-item-renderer:nth-child(3) > paper-item"
+        DELETE_OPTION_ON_MULTIPLE_OPTIONS_MENU_QUERY_SELECTOR
       );
 
       // Sometimes there will not be a third row, this means that the element will not exist
@@ -54,7 +63,7 @@ const iterateAndTriggerClickFunction = async (
         // In this case we reselect the one and only option (delete) in the pop-up menu
       } else {
         const deletedVideoMenuButton = document.querySelector(
-          "#items > ytd-menu-service-item-renderer > paper-item"
+          DELETE_OPTION_ON_SINGLE_OPTION_MENU_QUERY_SELECTOR
         );
 
         showLogs &&
@@ -83,7 +92,6 @@ const iterateAndTriggerClickFunction = async (
       );
 
     main(
-      originalQuery,
       0, // Always starting at the first video after being the first time
       remainingAmountOfVideosToDelete,
       showLogs,
@@ -103,14 +111,15 @@ const iterateAndTriggerClickFunction = async (
 };
 
 const main = (
-  query,
   startAt = 0,
   amountOfVideosToDelete = 1,
   showLogs = false,
   originalAmountOfVideosToDelete
 ) => {
   // Selects all the video rows. A list with one element for every video in the playlist
-  const playlistVideoRow = document.querySelectorAll(query);
+  const playlistVideoRow = document.querySelectorAll(
+    LIST_OF_ALL_VIDEOS_QUERY_SELECTOR
+  );
 
   showLogs &&
     console.log(
@@ -127,11 +136,10 @@ const main = (
       startAt,
       amountOfVideosToDelete,
       showLogs,
-      query,
       originalAmount
     );
   }
 };
 
 // Example execution: delete 210 videos starting by the first one and logging the process.
-main("#contents > ytd-playlist-video-renderer", 0, 210, true);
+main(0, 210, true);
