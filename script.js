@@ -10,7 +10,7 @@ const LIST_OF_ALL_VIDEOS_QUERY_SELECTOR =
 const SINGLE_VIDEO_MENU_BUTTON_QUERY_SELECTOR =
   "#button.style-scope.yt-icon-button";
 const DELETE_OPTION_ON_MULTIPLE_OPTIONS_MENU_QUERY_SELECTOR =
-  "#items > ytd-menu-service-item-renderer:nth-child(3) > paper-item";
+  "#items > ytd-menu-service-item-renderer:nth-child(3)";
 const DELETE_OPTION_ON_SINGLE_OPTION_MENU_QUERY_SELECTOR =
   "#items > ytd-menu-service-item-renderer > paper-item";
 
