@@ -18,6 +18,7 @@ const iterateAndTriggerClickFunction = async (
   elements,
   startAt,
   amountOfVideosToDelete,
+  delayMS,
   showLogs,
   originalAmountOfVideosToDelete
 ) => {
@@ -57,7 +58,7 @@ const iterateAndTriggerClickFunction = async (
           );
 
         menuButton.click();
-        await wait();
+        await wait(delayMS);
 
         // If the element didn't exist above, is because it was a video that had been deleted from Youtube
         // In this case we reselect the one and only option (delete) in the pop-up menu
@@ -75,7 +76,7 @@ const iterateAndTriggerClickFunction = async (
           );
 
         deletedVideoMenuButton.click();
-        await wait();
+        await wait(delayMS);
       }
     }
   }
@@ -113,6 +114,7 @@ const iterateAndTriggerClickFunction = async (
 const main = (
   startAt = 0,
   amountOfVideosToDelete = 1,
+  delayMS = 0,
   showLogs = false,
   originalAmountOfVideosToDelete
 ) => {
@@ -135,11 +137,12 @@ const main = (
       playlistVideoRow,
       startAt,
       amountOfVideosToDelete,
+      delayMS,
       showLogs,
       originalAmount
     );
   }
 };
 
-// Example execution: delete 210 videos starting by the first one and logging the process.
-main(0, 210, true);
+// Example execution: delete 210 videos starting by the first one and logging the process, with a delay between deletions of 1.5 seconds.
+main(0, 210, 1500, false);
